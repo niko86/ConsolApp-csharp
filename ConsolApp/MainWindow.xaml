@@ -7,9 +7,6 @@
         xmlns:local="clr-namespace:ConsolApp"
         mc:Ignorable="d"
         Title="Oedometer Converter" Height="450" Width="800">
-    <Window.DataContext>
-        <local:GeneratePlot/>
-    </Window.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -23,7 +20,11 @@
             <Separator HorizontalAlignment="Center" Height="46" VerticalAlignment="Top" Width="0"/>
         </Grid>
         <Grid Grid.Column="1">
-            <oxy:PlotView x:Name="ConsolPlot" Model="{Binding Model}" Margin="10,10,10,10"/>
+            <oxy:Plot x:Name="ConsolPlot" Margin="10,10,10,10">
+                <oxy:Plot.Series>
+                    <oxy:LineSeries ItemsSource="{Binding GraphData}" />
+                </oxy:Plot.Series>
+            </oxy:Plot>
         </Grid>
     </Grid>
 </Window>

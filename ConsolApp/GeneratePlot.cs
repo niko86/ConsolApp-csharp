@@ -13,29 +13,28 @@ namespace ConsolApp
     {
         public GeneratePlot()
         {
-            PlotModel tmp = new PlotModel { Title = "Simple example", Subtitle = "using OxyPlot" };
-
-            // Create two line series (markers are hidden by default)
-            LineSeries series = new LineSeries { Title = "Series", MarkerType = MarkerType.Circle };
-            TestData testdata = MainWindow.PlotTestData;
-
-            if (testdata != null)
-            {
-                for (int i = 0; i < testdata.Divs.Count; i++)
+            this.GraphData = new List<DataPoint>
                 {
-                    series.Points.Add(new DataPoint(testdata.Divs[i], testdata.Time[i]));
-                }
-            }
+                    new DataPoint(1.0, 1.0),
+                    new DataPoint(2.0, 3.0),
+                    new DataPoint(3.0, 2.0),
+                };
 
-            // Add the series to the plot model
-            tmp.Series.Add(series);
-
-            // Axes are created automatically if they are not defined
-
-            // Set the Model property, the INotifyPropertyChanged event will make the WPF Plot control update its content
-            Model = tmp;
         }
 
-        public PlotModel Model { get; private set; }
+        public IList<DataPoint> GraphData { get; set; }
+
+        public void NewPlot(TestData testdata)
+        {
+            if (testdata != null)
+            {
+                GraphData.Clear();
+
+                for (int i = 0; i < testdata.Divs.Count; i++)
+                    {
+                        GraphData.Add(new DataPoint(testdata.Time[i], testdata.Divs[i]));
+                    }
+            }
+        }
     }
 }

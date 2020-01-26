@@ -25,9 +25,12 @@ namespace ConsolApp
     public partial class MainWindow : Window
     {
 
+        public GeneratePlot ViewModel = new GeneratePlot();
+
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = ViewModel;
             SaveXMLButton.IsEnabled = false;
         }
 
@@ -72,11 +75,12 @@ namespace ConsolApp
 
                 ConsolData consolData = new ConsolData();
 
-                PlotTestData = consolData.ParseFile(FileNames[comboIndex]);
+                //PlotTestData = consolData.ParseFile(FileNames[comboIndex]);
+                ViewModel.NewPlot(consolData.ParseFile(FileNames[comboIndex]));
+                ConsolPlot.InvalidatePlot(true);
             }
         }
 
         public static string[] FileNames { get; private set; }
-        public static TestData PlotTestData { get; private set; }
     }
 }
