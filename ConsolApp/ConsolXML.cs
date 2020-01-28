@@ -31,11 +31,9 @@ namespace ConsolApp
         {
             // Have to add xmlns in a wierd way, found below:
             // http://www.mikesdotnetting.com/Article/111/RSS-Feeds-and-Google-Sitemaps-for-ASP.NET-MVC-with-LINQ-To-XML
-            XNamespace ns = "http://www.keynetix.com/XSD/KeyLAB/Export";
+            XNamespace ns = "http://www.keynetix.com/XSD/KeyLAB/Export"; // find out why this is adding xmlns to all subelements of (ns + "keylab"
 
             XDocument root = new XDocument(
-                //new XDeclaration("1.0", "utf-8", "no"),
-                new XComment("Produced using Fugro internal software"),
                 new XElement(ns + "keylab",
                     new XAttribute("content", "schedule"),
                     new XAttribute("timestamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")),
@@ -60,17 +58,46 @@ namespace ConsolApp
                         new XAttribute("name", "Unknown"),
                         new XElement("samples",
                             new XElement("sample",
-                                new XAttribute("name", "Unknown"),
+                                new XAttribute("id", "Unknown"),
                                 new XElement("test",
                                     new XAttribute("code", "OEDOISO"),
                                     new XAttribute("specimen", "1"),
-                                    new XElement("stages", "TODO")
+                                    new XElement("stages", string.Empty)
                                     )
                                 )
                             )
                         )
                     )
                 );
+
+            XElement test = root.Root.Element("project").Element("samples").Element("sample").Element("test").Element("stages");
+
+            for (int i = 0; i < MainWindow.FileNames.Length; i++)
+            {
+                XElement stage = new XElement("stage",
+                    new XAttribute("number", (i+1).ToString()),
+                    new XElement("parameters")
+                    );
+
+                test.Add(stage);
+
+                ConsolData consolData = new ConsolData();
+                ConsolData.TestData testdata = consolData.ParseFile(MainWindow.FileNames[i]);
+
+                for (int j = 0; j < testdata.Divs.Count; j++)
+                {
+                    XElement StagePasteDive1 = new XElement("parameter",
+                        new XAttribute("name", "Stage_StageReadings_StagePasteDive1"),
+                        new XAttribute("value", testdata.Divs[j].ToString()));
+
+                    XElement StagePasteMins1 = new XElement("parameter",
+                    new XAttribute("name", "Stage_StageReadings_StagePasteMins1"),
+                    new XAttribute("value", testdata.Time[j].ToString()));
+
+                    stage.Element("parameters").Add(StagePasteDive1);
+                    stage.Element("parameters").Add(StagePasteMins1);
+                }
+            }
 
             // Create SaveFileDialog 
             SaveFileDialog dlg = new SaveFileDialog
@@ -91,9 +118,9 @@ namespace ConsolApp
                 string str = File.ReadAllText(filename);
                 return str;
             }
-            else 
-            { 
-                return "Nothing"; 
+            else
+            {
+                return "Nothing";
             }
         }
     }

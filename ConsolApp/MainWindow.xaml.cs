@@ -63,7 +63,7 @@ namespace ConsolApp
         private void SaveXMLButton_Click(object sender, RoutedEventArgs e)
         {
             ConsolXML consolXML = new ConsolXML();
-            //XMLTextBox.Text = consolXML.GenerateXML();
+            consolXML.GenerateXML();
             SaveXMLButton.IsEnabled = false;
         }
 
