@@ -32,6 +32,7 @@ namespace ConsolApp
             InitializeComponent();
             DataContext = ViewModel;
             SaveXMLButton.IsEnabled = false;
+            FileComboBox.IsEnabled = false;
         }
 
         private void OpenFileButton_Click(object sender, RoutedEventArgs e)
@@ -56,7 +57,8 @@ namespace ConsolApp
                     FileComboBox.Items.Add(System.IO.Path.GetFileNameWithoutExtension(file_name));
                 }    
 
-                SaveXMLButton.IsEnabled = true;
+                SaveXMLButton.IsEnabled = !SaveXMLButton.IsEnabled;
+                FileComboBox.IsEnabled = !FileComboBox.IsEnabled;
             }
         }
 
@@ -64,7 +66,8 @@ namespace ConsolApp
         {
             ConsolXML consolXML = new ConsolXML();
             consolXML.GenerateXML();
-            SaveXMLButton.IsEnabled = false;
+            SaveXMLButton.IsEnabled = !SaveXMLButton.IsEnabled;
+            FileComboBox.IsEnabled = !FileComboBox.IsEnabled;
         }
 
         private void FileComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

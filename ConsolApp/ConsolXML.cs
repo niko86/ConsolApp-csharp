@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Microsoft.Win32;
 
 namespace ConsolApp
@@ -33,36 +34,36 @@ namespace ConsolApp
             // http://www.mikesdotnetting.com/Article/111/RSS-Feeds-and-Google-Sitemaps-for-ASP.NET-MVC-with-LINQ-To-XML
             XNamespace ns = "http://www.keynetix.com/XSD/KeyLAB/Export"; // find out why this is adding xmlns to all subelements of (ns + "keylab"
 
-            XDocument root = new XDocument(
+            XDocument xml_doc = new XDocument(
                 new XElement(ns + "keylab",
                     new XAttribute("content", "schedule"),
                     new XAttribute("timestamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")),
-                    new XElement("test-definitions",
-                        new XElement("test-definition",
+                    new XElement(ns + "test-definitions",
+                        new XElement(ns + "test-definition",
                             new XAttribute("name", "One Dimensional Consolidation ISO"),
                             new XAttribute("code", "OEDOISO"),
-                            new XElement("properties",
-                                new XElement("property",
+                            new XElement(ns + "properties",
+                                new XElement(ns + "property",
                                     new XAttribute("name", "Stage_StageReadings_StagePasteMins1"),
                                     new XAttribute("unit", "")
                                     ),
-                                new XElement("property",
+                                new XElement(ns + "property",
                                     new XAttribute("name", "Stage_StageReadings_StagePasteDive1"),
                                     new XAttribute("unit", "")
                                     )
                                 )
                             )
                         ),
-                    new XElement("project",
+                    new XElement(ns + "project",
                         new XAttribute("id", "Unknown"),
                         new XAttribute("name", "Unknown"),
-                        new XElement("samples",
-                            new XElement("sample",
+                        new XElement(ns + "samples",
+                            new XElement(ns + "sample",
                                 new XAttribute("id", "Unknown"),
-                                new XElement("test",
+                                new XElement(ns + "test",
                                     new XAttribute("code", "OEDOISO"),
                                     new XAttribute("specimen", "1"),
-                                    new XElement("stages", string.Empty)
+                                    new XElement(ns + "stages", string.Empty)
                                     )
                                 )
                             )
@@ -70,32 +71,33 @@ namespace ConsolApp
                     )
                 );
 
-            XElement test = root.Root.Element("project").Element("samples").Element("sample").Element("test").Element("stages");
+            // Must be a better way to use xpath and not get confused by namespace issues
+            XElement stages = xml_doc.Root.Element(ns + "project").Element(ns + "samples").Element(ns + "sample").Element(ns + "test").Element(ns + "stages");
 
             for (int i = 0; i < MainWindow.FileNames.Length; i++)
             {
-                XElement stage = new XElement("stage",
+                XElement stage = new XElement(ns + "stage",
                     new XAttribute("number", (i+1).ToString()),
-                    new XElement("parameters")
+                    new XElement(ns + "parameters")
                     );
 
-                test.Add(stage);
+                stages.Add(stage);
 
                 ConsolData consolData = new ConsolData();
                 ConsolData.TestData testdata = consolData.ParseFile(MainWindow.FileNames[i]);
 
                 for (int j = 0; j < testdata.Divs.Count; j++)
                 {
-                    XElement StagePasteDive1 = new XElement("parameter",
+                    XElement StagePasteDive1 = new XElement(ns + "parameter",
                         new XAttribute("name", "Stage_StageReadings_StagePasteDive1"),
                         new XAttribute("value", testdata.Divs[j].ToString()));
 
-                    XElement StagePasteMins1 = new XElement("parameter",
+                    XElement StagePasteMins1 = new XElement(ns + "parameter",
                     new XAttribute("name", "Stage_StageReadings_StagePasteMins1"),
                     new XAttribute("value", testdata.Time[j].ToString()));
 
-                    stage.Element("parameters").Add(StagePasteDive1);
-                    stage.Element("parameters").Add(StagePasteMins1);
+                    stage.Element(ns + "parameters").Add(StagePasteDive1);
+                    stage.Element(ns + "parameters").Add(StagePasteMins1);
                 }
             }
 
@@ -113,7 +115,7 @@ namespace ConsolApp
             if (dlg.ShowDialog() == true)
             {
                 filename = dlg.FileName;
-                root.Save(filename, SaveOptions.None);
+                xml_doc.Save(filename, SaveOptions.None);
 
                 string str = File.ReadAllText(filename);
                 return str;

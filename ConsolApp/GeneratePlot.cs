@@ -15,9 +15,7 @@ namespace ConsolApp
         {
             this.GraphData = new List<DataPoint>
                 {
-                    new DataPoint(1.0, 1.0),
-                    new DataPoint(2.0, 3.0),
-                    new DataPoint(3.0, 2.0),
+                    new DataPoint(0.0, 0.0),
                 };
 
         }
