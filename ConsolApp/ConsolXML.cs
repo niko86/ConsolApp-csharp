@@ -72,7 +72,12 @@ namespace ConsolApp
                 );
 
             // Must be a better way to use xpath and not get confused by namespace issues
-            XElement stages = xml_doc.Root.Element(ns + "project").Element(ns + "samples").Element(ns + "sample").Element(ns + "test").Element(ns + "stages");
+            XElement stages = xml_doc.Root
+                .Element(ns + "project")
+                .Element(ns + "samples")
+                .Element(ns + "sample")
+                .Element(ns + "test")
+                .Element(ns + "stages");
 
             for (int i = 0; i < MainWindow.FileNames.Length; i++)
             {
